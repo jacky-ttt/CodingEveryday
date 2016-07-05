@@ -7,13 +7,14 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var xlsx = require('xlsx');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+
+// var routes = require('./routes/index');
+// var users = require('./routes/users');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
+// // view engine setup
+// app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
@@ -24,9 +25,13 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+// app.use('/', routes);
+// app.use('/users', users);
 
+
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + "/views/index.html");
+});
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
