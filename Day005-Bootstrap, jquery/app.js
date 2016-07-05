@@ -29,6 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/users', users);
 
 
+app.use('/js', express.static(__dirname + '/node_modules/bootstrap-filestyle/src'));
+
 app.get('/', function (req, res) {
     res.sendFile(__dirname + "/views/index.html");
 });

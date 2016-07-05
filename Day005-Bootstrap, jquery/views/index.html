@@ -16,11 +16,6 @@
 </head>
 
 <body>
-<!--<form id="uploadForm" enctype="multipart/form-data"-->
-      <!--action="/upload" method="post">-->
-    <!--Excel: <input type="file" name="excel"/><br>-->
-    <!--<input type="submit" value="Upload" name="submit">-->
-<!--</form>-->
 
 <form class="form-horizontal"
       enctype="multipart/form-data"
@@ -47,6 +42,14 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
         crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="/js/bootstrap-filestyle.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $(":file").filestyle();
+    });
+</script>
 
 
 </body>
