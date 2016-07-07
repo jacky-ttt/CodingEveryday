@@ -84,6 +84,11 @@ function readExcel(excel) {
     }
 };
 
+app.get('/downloadPdf', function (req, res) {
+    var file = './public/file.pdf';
+    res.download(file);
+});
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
