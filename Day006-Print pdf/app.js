@@ -60,7 +60,7 @@ app.post('/upload', function (req, res) {
             return res.end("Error uploading file." + err);
         }
         readExcel(req.files.excel);
-        res.end('upload successfully');
+        res.sendFile(__dirname + "/views/result.html");
     });
 });
 
