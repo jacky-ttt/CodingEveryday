@@ -42,6 +42,11 @@ app.get('/downloadExcel', function (req, res) {
     res.download(file);
 });
 
+app.get('/downloadPdf', function (req, res) {
+    var file = './public/file.pdf';
+    res.download(file);
+});
+
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {

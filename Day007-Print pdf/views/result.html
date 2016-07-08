@@ -19,6 +19,7 @@
 Upload successfully!!!
 <div>
     <button id="d_excel" type="button" class="btn btn-default">download excel</button>
+    <button id="d_pdf" type="button" class="btn btn-default">download pdf</button>
 </div>
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"
@@ -34,6 +35,9 @@ Upload successfully!!!
     $(document).ready(function () {
         $("button#d_excel").click(function () {
             window.open('/downloadExcel');
+        });
+        $('button#d_pdf').click(function () {
+            window.open('/downloadPdf');
         });
     });
 </script>
