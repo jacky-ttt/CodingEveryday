@@ -62,7 +62,7 @@ app.post('/upload', function (req, res) {
             return res.end("Error uploading file." + err);
         }
         readExcel(req.files.excel);
-        makePDF('abc');
+        makePDF('abc', req.files.excel);
         res.sendFile(__dirname + "/views/result.html");
     });
 });
@@ -91,15 +91,25 @@ function readExcel(excel) {
         console.log(json[p].product);
         console.log(json[p].price);
     }
+    return json;
 }
 
-function makePDF(title) {
+function makePDF(title, excel) {
     var doc = new pdfkit();
     doc.pipe(fs.createWriteStream('./public/file.pdf'));
 
     // draw some text
     doc.fontSize(25)
         .text('Title: ' + title, 100, 80);
+
+    // write text according to the uploaded excel
+    var i = 0;
+    var excelJson = readExcel(excel);
+    for (p in excelJson) {
+        doc.fontSize(20)
+            .text('Product: ' + excelJson[p].product + ', Price: ' + excelJson[p].price, 100, 110 + i);
+        i += 20;
+    }
 
     doc.end();
 }
