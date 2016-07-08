@@ -1,0 +1,21 @@
+{
+  "name": "upload_excel",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "bootstrap-filestyle": "^1.2.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "express": "~4.13.4",
+    "jade": "~1.11.0",
+    "morgan": "~1.7.0",
+    "multer": "^1.1.0",
+    "pdfkit": "^0.7.2",
+    "serve-favicon": "~2.3.0",
+    "xlsx": "^0.8.0"
+  }
+}
