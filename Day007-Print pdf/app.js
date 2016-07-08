@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var xlsx = require('xlsx');
+var pdfkit = require('pdfkit');
+var fs = require('fs');
 
 
 // var routes = require('./routes/index');
@@ -60,6 +62,7 @@ app.post('/upload', function (req, res) {
             return res.end("Error uploading file." + err);
         }
         readExcel(req.files.excel);
+        makePDF('abc');
         res.sendFile(__dirname + "/views/result.html");
     });
 });
@@ -88,7 +91,18 @@ function readExcel(excel) {
         console.log(json[p].product);
         console.log(json[p].price);
     }
-};
+}
+
+function makePDF(title) {
+    var doc = new pdfkit();
+    doc.pipe(fs.createWriteStream('./public/file.pdf'));
+
+    // draw some text
+    doc.fontSize(25)
+        .text('Title: ' + title, 100, 80);
+
+    doc.end();
+}
 
 
 // catch 404 and forward to error handler
