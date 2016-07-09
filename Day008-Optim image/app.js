@@ -47,6 +47,10 @@ app.get('/downloadPdf', function (req, res) {
     res.download(file);
 });
 
+app.get('/firebase', function (req, res) {
+    res.sendFile(__dirname + "/views/firebase.html");
+});
+
 
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
