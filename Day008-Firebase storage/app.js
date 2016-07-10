@@ -13,6 +13,13 @@ var fs = require('fs');
 // var routes = require('./routes/index');
 // var users = require('./routes/users');
 
+var gcloud = require('gcloud')({
+    projectId: '<project_id>',
+    // Specify a path to a keyfile.
+    keyFilename: './<key_file>.json'
+});
+
+
 var app = express();
 
 // // view engine setup
@@ -74,6 +81,7 @@ app.post('/upload', function (req, res) {
         }
         readExcel(req.files.excel);
         makePDF(req.body.title, req.files.excel, req.files.image, someText);
+        sendUploadToGCS(req, res);
         res.sendFile(__dirname + "/views/result.html");
     });
 });
@@ -143,6 +151,44 @@ function makePDF(title, excel, image, defaultText) {
         });
 
     doc.end();
+}
+
+function sendUploadToGCS(req, res) {
+    var gcsname = Date.now() + req.files.excel[0].originalname;
+    var gcs = gcloud.storage();
+    var bucket = gcs.bucket('<bucket_name>.appspot.com');
+    // console.log(bucket);
+
+    // Reference to a file
+    var file = bucket.file('abc.xlsx');
+
+    // Get the file metadata
+    file.getMetadata(function (err, metadata, apiResponse) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(metadata);
+        }
+    });
+
+
+    var file = bucket.file(gcsname);
+    var stream = file.createWriteStream();
+
+    stream.on('error', function (err) {
+        // req.file.cloudStorageError = err;
+        // next(err);
+        console.log(err);
+    });
+
+    stream.on('finish', function () {
+        // req.file.cloudStorageObject = gcsname;
+        // req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
+        // next();
+        console.log('finish');
+    });
+
+    stream.end(req.files.excel[0].buffer);
 }
 
 
