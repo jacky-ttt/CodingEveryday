@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<progress value="0" max="100" id="uploader">0%</progress>
+<input type="file" value="upload" id="fileButton">
+
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "<apiKey>",
+        authDomain: "<authDomain>",
+        databaseURL: "<databaseURL>",
+        storageBucket: "<storageBucket>",
+    };
+    firebase.initializeApp(config);
+
+    var uploader = document.getElementById('uploader');
+    var fileButton = document.getElementById('fileButton');
+
+    fileButton.addEventListener('change', function (e) {
+        var file = e.target.files[0];
+
+        var storageRef = firebase.storage().ref('images/' + file.name);
+
+        var task = storageRef.put(file);
+
+        task.on('state_changed',
+                function progress(snapshot) {
+                    var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    uploader.value = percentage;
+                }, function error(err) {
+
+                }, function complete() {
+
+                });
+    });
+</script>
+
+</body>
+</html>
