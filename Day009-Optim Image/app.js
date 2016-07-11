@@ -8,15 +8,16 @@ var multer = require('multer');
 var xlsx = require('xlsx');
 var pdfkit = require('pdfkit');
 var fs = require('fs');
+var config = require('config');
 
 
 // var routes = require('./routes/index');
 // var users = require('./routes/users');
 
 var gcloud = require('gcloud')({
-    projectId: '<project_id>',
+    projectId: config.get('Firebase.projectId'),
     // Specify a path to a keyfile.
-    keyFilename: './<key_file>.json'
+    keyFilename: config.get('Firebase.keyFile')
 });
 
 
@@ -156,7 +157,7 @@ function makePDF(title, excel, image, defaultText) {
 function sendUploadToGCS(req, res) {
     var gcsname = Date.now() + req.files.excel[0].originalname;
     var gcs = gcloud.storage();
-    var bucket = gcs.bucket('<bucket_name>.appspot.com');
+    var bucket = gcs.bucket(config.get("Firebase.storage.bucketName"));
     // console.log(bucket);
 
     // Reference to a file
