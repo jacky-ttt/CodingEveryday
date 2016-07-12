@@ -9,6 +9,9 @@ var xlsx = require('xlsx');
 var pdfkit = require('pdfkit');
 var fs = require('fs');
 var config = require('config');
+const imagemin = require('imagemin');
+const imageminMozjpeg = require('imagemin-mozjpeg');
+const imageminPngquant = require('imagemin-pngquant');
 
 
 // var routes = require('./routes/index');
@@ -83,6 +86,7 @@ app.post('/upload', function (req, res) {
         readExcel(req.files.excel);
         makePDF(req.body.title, req.files.excel, req.files.image, someText);
         sendUploadToGCS(req, res);
+        optimizeImages();
         res.sendFile(__dirname + "/views/result.html");
     });
 });
@@ -190,6 +194,18 @@ function sendUploadToGCS(req, res) {
     });
 
     stream.end(req.files.excel[0].buffer);
+}
+
+function optimizeImages() {
+    imagemin(['public/images/*.+(jpg|png)'], 'build/images', {
+        plugins: [
+            imageminMozjpeg(),
+            imageminPngquant({quality: '65-80'})
+        ]
+    }).then(function (files) {
+        console.log(files);
+        //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
+    });
 }
 
 
