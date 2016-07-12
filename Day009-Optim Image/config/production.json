@@ -1,0 +1,10 @@
+{
+  // production config
+  "Firebase": {
+    "projectId": "<projectId>",
+    "keyFile": "./<key_file>.json",
+    "storage": {
+      "bucketName": "<bucket_name>.appspot.com"
+    }
+  }
+}
