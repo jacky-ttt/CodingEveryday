@@ -25,6 +25,7 @@
 //  SOFTWARE.
 
 import UIKit
+import Firebase
 
 let videoUrl = NSURL(string: "https://v.cdn.vine.co/r/videos/AA3C120C521177175800441692160_38f2cbd1ffb.1.5.13763579289575020226.mp4")!
 
@@ -68,6 +69,14 @@ class ViewController: UIViewController, PlayerDelegate {
         let tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGestureRecognizer(_:)))
         tapGestureRecognizer.numberOfTapsRequired = 1
         self.player.view.addGestureRecognizer(tapGestureRecognizer)
+        
+        
+        FIRDatabase.database().reference().child("url").observeEventType(.Value, withBlock: {(snapshot) in
+            let videoUrl2 = NSURL(string: snapshot.value as! String)!
+            self.player.setUrl(videoUrl2)
+            self.player.playFromBeginning()
+            
+        })
     }
 
     override func viewDidAppear(animated: Bool) {
