@@ -1,9 +1,13 @@
 package com.example.jackytsang.presentationapi;
 
+import android.annotation.TargetApi;
 import android.hardware.display.DisplayManager;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+
+import java.lang.annotation.Target;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,10 +18,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_primary);
 
-
-        multiInit();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+            multiInit();
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void multiInit() {
         DisplayManager dm = (DisplayManager) getSystemService(DISPLAY_SERVICE);
         if (dm == null)
