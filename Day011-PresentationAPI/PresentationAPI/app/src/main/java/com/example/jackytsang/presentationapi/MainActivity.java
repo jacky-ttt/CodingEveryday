@@ -54,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
             dm.unregisterDisplayListener(mDisplayListener);
             mDisplayListener = null;
         }
+
+        if (mPresentation != null) {
+            mPresentation.dismiss();
+            mPresentation = null;
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
