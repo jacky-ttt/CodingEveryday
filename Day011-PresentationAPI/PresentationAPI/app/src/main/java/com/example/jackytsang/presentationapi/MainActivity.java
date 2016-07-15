@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         mDisplayListener = new MyDisplayListener();
         dm.registerDisplayListener(mDisplayListener, null);
         Display[] displays = dm.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION);
+        if (displays == null)
+            return;
 
         for (Display display : displays) {
             mPresentation = new MyPresentation(this, display);
@@ -49,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void multiDestroy() {
-        if (mDisplayListener != null) {
-            DisplayManager dm = (DisplayManager) getSystemService(DISPLAY_SERVICE);
+        DisplayManager dm = (DisplayManager) getSystemService(DISPLAY_SERVICE);
+        if (dm != null && mDisplayListener != null) {
             dm.unregisterDisplayListener(mDisplayListener);
             mDisplayListener = null;
         }
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDisplayAdded(int displayId) {
             DisplayManager dm = (DisplayManager) getSystemService(DISPLAY_SERVICE);
+            if (dm == null)
+                return;
 
             Display display = dm.getDisplay(displayId);
             if (display == null)
