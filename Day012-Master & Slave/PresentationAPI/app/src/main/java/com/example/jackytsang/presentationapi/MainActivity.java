@@ -6,18 +6,29 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.View;
+import android.widget.Button;
 
 import java.lang.annotation.Target;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
     private MyPresentation mPresentation;
     private MyDisplayListener mDisplayListener;
 
+    @BindView(R.id.control_btn)
+    Button controlBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_primary);
+
+        ButterKnife.bind(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
             multiInit();
@@ -61,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
             mPresentation.dismiss();
             mPresentation = null;
         }
+    }
+
+    @OnClick(R.id.control_btn)
+    public void onControlBtnClick(View view) {
+        if (mPresentation != null)
+            mPresentation.setDynamicText("Changed");
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)

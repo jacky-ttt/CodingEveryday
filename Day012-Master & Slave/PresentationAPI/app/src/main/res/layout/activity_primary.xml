@@ -10,7 +10,16 @@
     tools:context="com.example.jackytsang.presentationapi.MainActivity">
 
     <TextView
+        android:id="@+id/primary_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World! \n1st screen" />
+
+    <Button
+        android:id="@+id/control_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="control"
+        android:layout_below="@+id/primary_text" />
+
 </RelativeLayout>

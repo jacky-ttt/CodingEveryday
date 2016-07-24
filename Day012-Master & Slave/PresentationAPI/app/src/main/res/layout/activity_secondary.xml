@@ -10,7 +10,16 @@
     tools:context="com.example.jackytsang.presentationapi.MainActivity">
 
     <TextView
+        android:id="@+id/secondary_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World! \n2nd screen" />
+
+    <TextView
+        android:id="@+id/dynamic_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/secondary_text"
+        android:text="Original text" />
+
 </RelativeLayout>
