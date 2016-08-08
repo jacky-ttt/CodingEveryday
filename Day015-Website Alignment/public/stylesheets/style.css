@@ -1,0 +1,17 @@
+.container {
+    display: table;
+    width: 100%;
+    height: 100vh;
+}
+
+.container-inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.content {
+    text-align: center;
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
