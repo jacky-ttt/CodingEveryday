@@ -1,7 +1,7 @@
 # Day002
 day2 of #CodingEveryday
 
-(posted on https://medium.com/@ma010hkchun)
+(posted on https://medium.com/@jacky_ttt)
 Day002
 In Day001, I have to uninstall and reinstall the anaconda in order to use pydot in visualizing the decision tree. The process is pain in the ass. I hate it so much. I hate every configuration error I have to fix before I move on. So much unnecessary time is wasted in such painful process.
 After the uninstall and reinstall of anaconda, I found the python command (e.g. python hello-world.py)can work no more. I know it is an environment variable problem, but I just don’t know where to look in my mac. I spent a few hours just for fixing this issue, until I find this
