@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     private ComponentName deviceAdmin;
     private DevicePolicyManager mDpm;
     private PackageManager mPackageManager;
+    private ActivityManager am;
+
     private static final String Battery_PLUGGED_ANY = Integer.toString(
             BatteryManager.BATTERY_PLUGGED_AC |
                     BatteryManager.BATTERY_PLUGGED_USB |
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         deviceAdmin = new ComponentName(this, AdminReceiver.class);
         mDpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         mPackageManager = getPackageManager();
+        am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 //        setDefaultCosuPolicies(true);
 
 
@@ -54,25 +57,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-//        // start lock task mode if it's not already active
-//        ActivityManager am = (ActivityManager) getSystemService(
-//                Context.ACTIVITY_SERVICE);
-//        // ActivityManager.getLockTaskModeState api is not available in pre-M.
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-//            if (!am.isInLockTaskMode()) {
-//                startLockTask();
-//            }
-//        } else {
-//            if (am.getLockTaskModeState() ==
-//                    ActivityManager.LOCK_TASK_MODE_NONE) {
-//                startLockTask();
-//            }
-//        }
-    }
 
     private void setDefaultCosuPolicies(boolean active) {
         // set user restrictions
@@ -145,16 +129,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void enableKioskMode(boolean enabled) {
         try {
-            if (enabled) {
-                if (mDpm.isLockTaskPermitted(this.getPackageName())) {
-                    startLockTask();
-                    mIsKioskEnabled = true;
-                } else {
-                    Toast.makeText(this, getString(R.string.kiosk_not_permitted), Toast.LENGTH_SHORT).show();
-                }
-            } else {
+            if (!enabled && am.isInLockTaskMode()) {
                 stopLockTask();
                 mIsKioskEnabled = false;
+                return;
+            }
+
+            if (mDpm.isLockTaskPermitted(this.getPackageName())) {
+                if (!am.isInLockTaskMode()) {
+                    startLockTask();
+                    mIsKioskEnabled = true;
+                }
+            } else {
+                Toast.makeText(this, getString(R.string.kiosk_not_permitted), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             // TODO: Log and handle appropriately
