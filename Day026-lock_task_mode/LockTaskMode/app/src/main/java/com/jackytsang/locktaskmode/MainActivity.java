@@ -2,19 +2,19 @@ package com.jackytsang.locktaskmode;
 
 import android.app.ActivityManager;
 import android.app.admin.DevicePolicyManager;
-import android.app.admin.SystemUpdatePolicy;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -146,5 +146,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             // TODO: Log and handle appropriately
         }
+    }
+
+    @OnClick(R.id.toggle_kiosk)
+    void toogleKiosk() {
+        enableKioskMode(!mIsKioskEnabled);
     }
 }
