@@ -45,13 +45,13 @@ function Spot(i, j) {
 	}
 
 	this.show = function(color) {
-		// fill(color);
 		if (this.wall) {
 			fill(0);
-			noStroke();
-			ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
+		} else {
+			fill(color);
 		}
-		// noStroke();
+		noStroke();
+		ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
 		// rect(this.i * w, this.j * h, w - 1, h - 1);
 	}
 
@@ -188,13 +188,13 @@ function draw() {
 		}
 	}
 
-	// for (var i = 0; i < closedSet.length; i++) {
-	// 	closedSet[i].show(color(255, 0, 0));
-	// }
-
-	// for (var i = 0; i < openSet.length; i++) {
-	// 	openSet[i].show(color(0, 255, 0));
-	// }
+	// for debug
+	for (var i = 0; i < closedSet.length; i++) {
+		closedSet[i].show(color(255, 0, 0));
+	}
+	for (var i = 0; i < openSet.length; i++) {
+		openSet[i].show(color(0, 255, 0));
+	}
 
 
 	// find the path
