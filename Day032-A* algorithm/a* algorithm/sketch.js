@@ -11,17 +11,17 @@ function removeFromArray(arr, elt) {
 
 // calculate distance between two spots
 function heuristic(a, b) {
-	// // Euclidean distance
-	// var d = dist(a.i, a.j, b.i, b.j);
-	// Manhattan / taixcab distance
-	var d = abs(a.i - b.i) + abs(b.i - b.j);
+	// Euclidean distance
+	var d = dist(a.i, a.j, b.i, b.j);
+	// // Manhattan / taixcab distance
+	// var d = abs(a.i - b.i) + abs(b.i - b.j);
 	return d;
 }
 
 
 var grid = new Array(cols);
-var cols = 10,
-	rows = 10;
+var cols = 30,
+	rows = 30;
 
 var openSet = [];
 var closedSet = [];
@@ -38,9 +38,17 @@ function Spot(i, j) {
 	this.h = 0;
 	this.neighbors = [];
 	this.previous = undefined;
+	this.wall = false;
+
+	if (random(1) < 0.3) {
+		this.wall = true;
+	}
 
 	this.show = function(color) {
 		fill(color);
+		if (this.wall) {
+			fill(0);
+		}
 		noStroke();
 		rect(this.i * w, this.j * h, w - 1, h - 1);
 	}
@@ -57,6 +65,16 @@ function Spot(i, j) {
 			this.neighbors.push(grid[i][j + 1]);
 		if (j > 0)
 			this.neighbors.push(grid[i][j - 1]);
+
+		// diagonal
+		if (i > 0 && j > 0)
+			this.neighbors.push(grid[i - 1][j - 1]);
+		if (i < cols - 1 && j > 0)
+			this.neighbors.push(grid[i + 1][j - 1]);
+		if (i > 0 && j < rows - 1)
+			this.neighbors.push(grid[i - 1][j + 1]);
+		if (i < cols - 1 && j < rows - 1)
+			this.neighbors.push(grid[i + 1][j + 1]);
 	}
 }
 
@@ -86,6 +104,9 @@ function setup() {
 
 	start = grid[0][0];
 	end = grid[cols - 1][rows - 1];
+	// start and end spot are never a wall
+	start.wall = false;
+	end.wall = false;
 
 	openSet.push(start);
 
@@ -119,14 +140,15 @@ function draw() {
 		for (var i = 0; i < neighbors.length; i++) {
 			var neighbor = neighbors[i];
 
-			if (!closedSet.includes(neighbor)) {
+			if (!closedSet.includes(neighbor) && !neighbor.wall) {
 				var tempG = current.g + 1;
 
-
+				var newPath = false;
 				if (openSet.includes(neighbor)) {
 					// if it costs less than the original, there exist a path with lower cost to get there. 
 					if (tempG < neighbor.g) {
 						neighbor.g = tempG;
+						newPath = true;
 					}
 				} else {
 					// if that spot is neither in closedSet and openSet, the spot has not been discovered yet. 
@@ -135,19 +157,25 @@ function draw() {
 
 					// neighbor is not yet in the openSet, add it
 					openSet.push(neighbor);
+					newPath = true;
 				}
 
-				// make an educated guess of how much cost does it take 
-				// to go to the end from neighbor spot
-				neighbor.h = heuristic(neighbor, end);
+				if (newPath) {
+					// make an educated guess of how much cost does it take 
+					// to go to the end from neighbor spot
+					neighbor.h = heuristic(neighbor, end);
 
-				neighbor.f = neighbor.g + neighbor.h;
+					neighbor.f = neighbor.g + neighbor.h;
 
-				neighbor.previous = current;
+					neighbor.previous = current;
+				}
 			}
 		}
 	} else {
 		// no solution
+		console.log('no solution');
+		noLoop();
+		return;
 	}
 
 	background(0);
