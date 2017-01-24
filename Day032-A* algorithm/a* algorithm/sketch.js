@@ -9,9 +9,11 @@ function removeFromArray(arr, elt) {
 	}
 }
 
-// calculate Euclidean distance between two spots
+// calculate distance between two spots
 function heuristic(a, b) {
+	// // Euclidean distance
 	// var d = dist(a.i, a.j, b.i, b.j);
+	// Manhattan / taixcab distance
 	var d = abs(a.i - b.i) + abs(b.i - b.j);
 	return d;
 }
@@ -65,7 +67,7 @@ function setup() {
 	w = width / cols;
 	h = height / rows;
 
-	//making a 2d array
+	// making a 2d array
 	for (var i = 0; i < cols; i++) {
 		grid[i] = new Array(rows);
 	}
@@ -96,7 +98,7 @@ function draw() {
 		// we can keep going
 
 		var winner = 0;
-		for (vari = 0; i < openSet.length; i++) {
+		for (var i = 0; i < openSet.length; i++) {
 			if (openSet[i].f < openSet[winner].f) {
 				winner = i;
 			}
