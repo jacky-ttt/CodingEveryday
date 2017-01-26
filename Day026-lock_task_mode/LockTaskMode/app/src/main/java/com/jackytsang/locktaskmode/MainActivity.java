@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.toggle_kiosk)
-    void toogleKiosk() {
+    void toggleKiosk() {
         enableKioskMode(!mIsKioskEnabled);
     }
 }
