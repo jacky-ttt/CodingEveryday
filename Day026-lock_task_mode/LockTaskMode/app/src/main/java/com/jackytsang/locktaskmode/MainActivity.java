@@ -1,5 +1,6 @@
 package com.jackytsang.locktaskmode;
 
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,8 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import butterknife.OnClick;
+
+import static android.app.ActivityManager.LOCK_TASK_MODE_LOCKED;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @TargetApi(Build.VERSION_CODES.M)
     private void setDefaultCosuPolicies(boolean active) {
         // set user restrictions
         setUserRestriction(UserManager.DISALLOW_SAFE_BOOT, active);
@@ -126,17 +130,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isInLockMode() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return am.isInLockTaskMode();
+        else
+            return am.getLockTaskModeState() == LOCK_TASK_MODE_LOCKED;
+    }
+
 
     private void enableKioskMode(boolean enabled) {
         try {
-            if (!enabled && am.isInLockTaskMode()) {
+            if (!enabled && isInLockMode()) {
                 stopLockTask();
                 mIsKioskEnabled = false;
                 return;
             }
 
             if (mDpm.isLockTaskPermitted(this.getPackageName())) {
-                if (!am.isInLockTaskMode()) {
+                if (!isInLockMode()) {
                     startLockTask();
                     mIsKioskEnabled = true;
                 }
