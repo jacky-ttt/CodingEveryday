@@ -1,18 +1,28 @@
 package com.jackytsang.realmchangelistener.realm;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 
 public class SomeObject extends RealmObject {
 
-    private String accessToken;
+    @PrimaryKey
+    private int index; // if not set, it is default 0
+    private String someText;
 
-    public String getAccessToken() {
-        return accessToken;
+    public int getIndex() {
+        return index;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
+    public String getSomeText() {
+        return someText;
+    }
+
+    public void setSomeText(String someText) {
+        this.someText = someText;
+    }
 }
