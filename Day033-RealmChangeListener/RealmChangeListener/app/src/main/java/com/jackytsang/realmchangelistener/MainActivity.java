@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.toggle)
     public void toggleText(ToggleButton toggleButton) {
         final SomeObject someObject = new SomeObject();
-        someObject.setSomeText(toggleButton.isChecked() ? "ON" : "OFF");
+        someObject.setSomeText(toggleButton.isChecked() ? "ON!!" : "OFF!!");
         RealmResults<SomeObject> rr = realm.where(SomeObject.class).findAll();
         Log.e("tag", rr.toString());
         realm.executeTransaction(new Realm.Transaction() {
