@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
     private Realm realm;
     private RealmResults<SomeObject> someObjectRealmResults;
     private SomeObject someObject;
-    private RealmChangeListener<RealmResults<SomeObject>> realmChangeListener;
-    private RealmChangeListener realmListener;
+    private RealmChangeListener<RealmResults<SomeObject>> objectRrChangeListener;
+    private RealmChangeListener objectChangeListener;
 
     @BindView(R.id.the_text)
     TextView theTextView;
@@ -37,16 +37,16 @@ public class MainActivity extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
         someObjectRealmResults = realm.where(SomeObject.class).findAllAsync();
-        realmChangeListener = new RealmChangeListener<RealmResults<SomeObject>>() {
+        objectRrChangeListener = new RealmChangeListener<RealmResults<SomeObject>>() {
             @Override
-            public void onChange(RealmResults<SomeObject> upOauths) {
+            public void onChange(RealmResults<SomeObject> someObjectRealmResults) {
                 // do something upon change
                 updateUI(someObjectRealmResults);
             }
         };
 
         someObject = realm.where(SomeObject.class).equalTo("someText", "ON").findFirstAsync();
-        realmListener = new RealmChangeListener<SomeObject>() {
+        objectChangeListener = new RealmChangeListener<SomeObject>() {
 
             @Override
             public void onChange(SomeObject element) {
@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // add listeners
-        someObjectRealmResults.addChangeListener(realmChangeListener);
-        someObject.addChangeListener(realmListener);
+        someObjectRealmResults.addChangeListener(objectRrChangeListener);
+        someObject.addChangeListener(objectChangeListener);
     }
 
     @Override
