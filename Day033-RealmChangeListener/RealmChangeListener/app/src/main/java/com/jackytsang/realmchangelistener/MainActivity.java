@@ -110,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI2() {
+        // at start up, no someObject can be found,
+        // use if (someObject!=null) will not work,
+        // should use isValid() instead
         if (someObject.isValid())
             theTextView.setText(someObject.getSomeText());
     }
