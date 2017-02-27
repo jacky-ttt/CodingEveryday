@@ -19,7 +19,13 @@ public class MainActivity extends AppCompatActivity {
 
     private Realm realm;
     private RealmResults<SomeObject> someObjectRealmResults;
+    private SomeObject someObject;
     private RealmChangeListener<RealmResults<SomeObject>> realmChangeListener;
+    private RealmChangeListener realmListener;
+
+    @BindView(R.id.the_text)
+    TextView theTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +44,17 @@ public class MainActivity extends AppCompatActivity {
                 updateUI(someObjectRealmResults);
             }
         };
+
+        someObject = realm.where(SomeObject.class).equalTo("someText", "ON").findFirstAsync();
+        realmListener = new RealmChangeListener<SomeObject>() {
+
+            @Override
+            public void onChange(SomeObject element) {
+                updateUI2();
+            }
+        };
     }
+
 
     @Override
     protected void onStart() {
@@ -46,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         // add listeners
         someObjectRealmResults.addChangeListener(realmChangeListener);
+        someObject.addChangeListener(realmListener);
     }
 
     @Override
@@ -54,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         // remove all registered listeners
         someObjectRealmResults.removeChangeListeners();
+        someObject.removeChangeListeners();
     }
 
     @Override
@@ -89,5 +107,10 @@ public class MainActivity extends AppCompatActivity {
             SomeObject theObject = someObjectRealmResults.get(0);
             theTextView.setText(theObject.getSomeText());
         }
+    }
+
+    private void updateUI2() {
+        if (someObject.isValid())
+            theTextView.setText(someObject.getSomeText());
     }
 }
