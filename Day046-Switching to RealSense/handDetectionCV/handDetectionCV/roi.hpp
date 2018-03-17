@@ -8,15 +8,15 @@
 
 using namespace cv;
 
-class My_ROI{
-	public:
-		My_ROI();
-		My_ROI(Point upper_corner, Point lower_corner,Mat src);
-		Point upper_corner, lower_corner;
-		Mat roi_ptr;
-		Scalar color;
-		int border_thickness;
-		void draw_rectangle(Mat src);
+class My_ROI {
+public:
+	My_ROI();
+	My_ROI(Point upper_corner, Point lower_corner, Mat src);
+	Point upper_corner, lower_corner;
+	Mat roi_ptr;
+	Scalar color;
+	int border_thickness;
+	void draw_rectangle(Mat src);
 };
 
 

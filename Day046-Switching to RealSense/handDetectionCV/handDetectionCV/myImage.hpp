@@ -8,17 +8,17 @@
 using namespace cv;
 using namespace std;
 
-class MyImage{
-	public:
-		MyImage(int webCamera);
-		MyImage();
-		Mat srcLR;
-		Mat src;
-		Mat bw;
-		vector<Mat> bwList;
-		VideoCapture cap;		
-		int cameraSrc; 
-		void initWebCamera(int i);
+class MyImage {
+public:
+	MyImage(int webCamera);
+	MyImage();
+	Mat srcLR;
+	Mat src;
+	Mat bw;
+	vector<Mat> bwList;
+	VideoCapture cap;
+	int cameraSrc;
+	void initWebCamera(int i);
 };
 
 
