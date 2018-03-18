@@ -11,9 +11,12 @@
 #include <vector>
 #include <cmath>
 #include "main.hpp"
+#include <librealsense2/rs.hpp>
+#include "cv-helpers.hpp"
 
 using namespace cv;
 using namespace std;
+using namespace rs2;
 
 /* Global Variables  */
 int fontFace = FONT_HERSHEY_PLAIN;
@@ -57,7 +60,7 @@ void printText(Mat src, string text) {
 }
 
 void waitForPalmCover(MyImage* m) {
-	m->cap >> m->src;
+	m->src = m->o_src.clone();
 	flip(m->src, m->src, 1);
 	roi.push_back(My_ROI(Point(m->src.cols / 3, m->src.rows / 6), Point(m->src.cols / 3 + square_len, m->src.rows / 6 + square_len), m->src));
 	roi.push_back(My_ROI(Point(m->src.cols / 4, m->src.rows / 2), Point(m->src.cols / 4 + square_len, m->src.rows / 2 + square_len), m->src));
@@ -69,7 +72,7 @@ void waitForPalmCover(MyImage* m) {
 
 
 	for (int i = 0; i < 50; i++) {
-		m->cap >> m->src;
+		m->src = m->o_src.clone();
 		flip(m->src, m->src, 1);
 		for (int j = 0; j < NSAMPLES; j++) {
 			roi[j].draw_rectangle(m->src);
@@ -121,10 +124,10 @@ void getAvgColor(MyImage *m, My_ROI roi, int avg[3]) {
 }
 
 void average(MyImage *m) {
-	m->cap >> m->src;
+	m->src = m->o_src.clone();
 	flip(m->src, m->src, 1);
 	for (int i = 0; i < 30; i++) {
-		m->cap >> m->src;
+		m->src = m->o_src.clone();
 		flip(m->src, m->src, 1);
 		cvtColor(m->src, m->src, ORIGCOL2COL);
 		for (int j = 0; j < NSAMPLES; j++) {
@@ -166,7 +169,7 @@ void normalizeColors(MyImage * myImage) {
 			c_upper[i][j] = c_upper[0][j];
 		}
 	}
-	// normalize all boundries so that 
+	// normalize all boundries so that
 	// threshold is whithin 0-255
 	for (int i = 0; i < NSAMPLES; i++) {
 		if ((avgColor[i][0] - c_lower[i][0]) < 0) {
@@ -185,30 +188,30 @@ void normalizeColors(MyImage * myImage) {
 	}
 }
 
-void produceBinaries(MyImage *m) {
-	Scalar lowerBound;
-	Scalar upperBound;
-	Mat foo;
-	for (int i = 0; i < NSAMPLES; i++) {
-		normalizeColors(m);
-		lowerBound = Scalar(avgColor[i][0] - c_lower[i][0], avgColor[i][1] - c_lower[i][1], avgColor[i][2] - c_lower[i][2]);
-		upperBound = Scalar(avgColor[i][0] + c_upper[i][0], avgColor[i][1] + c_upper[i][1], avgColor[i][2] + c_upper[i][2]);
-		m->bwList.push_back(Mat(m->srcLR.rows, m->srcLR.cols, CV_8U));
-		inRange(m->srcLR, lowerBound, upperBound, m->bwList[i]);
-	}
-	m->bwList[0].copyTo(m->bw);
-	for (int i = 1; i < NSAMPLES; i++) {
-		m->bw += m->bwList[i];
-	}
-	medianBlur(m->bw, m->bw, 7);
+//void produceBinaries(MyImage *m) {
+//	Scalar lowerBound;
+//	Scalar upperBound;
+//	Mat foo;
+//	for (int i = 0; i < NSAMPLES; i++) {
+//		normalizeColors(m);
+//		lowerBound = Scalar(avgColor[i][0] - c_lower[i][0], avgColor[i][1] - c_lower[i][1], avgColor[i][2] - c_lower[i][2]);
+//		upperBound = Scalar(avgColor[i][0] + c_upper[i][0], avgColor[i][1] + c_upper[i][1], avgColor[i][2] + c_upper[i][2]);
+//		m->bwList.push_back(Mat(m->srcLR.rows, m->srcLR.cols, CV_8U));
+//		inRange(m->srcLR, lowerBound, upperBound, m->bwList[i]);
+//	}
+//	m->bwList[0].copyTo(m->bw);
+//	for (int i = 1; i < NSAMPLES; i++) {
+//		m->bw += m->bwList[i];
+//	}
+//	medianBlur(m->bw, m->bw, 7);
+//}
+
+void initWindows(MyImage m, String window_name) {
+	//namedWindow("trackbars", CV_WINDOW_KEEPRATIO);
+	namedWindow(window_name, WINDOW_AUTOSIZE);
 }
 
-void initWindows(MyImage m) {
-	namedWindow("trackbars", CV_WINDOW_KEEPRATIO);
-	namedWindow("img1", CV_WINDOW_FULLSCREEN);
-}
-
-void showWindows(MyImage m) {
+void showWindows(MyImage m, String window_name) {
 	pyrDown(m.bw, m.bw);
 	pyrDown(m.bw, m.bw);
 	Rect roi(Point(3 * m.src.cols / 4, 0), m.bw.size());
@@ -218,7 +221,7 @@ void showWindows(MyImage m) {
 		channels.push_back(m.bw);
 	merge(channels, result);
 	result.copyTo(m.src(roi));
-	imshow("img1", m.src);
+	imshow(window_name, m.src);
 }
 
 int findBiggestContour(vector<vector<Point> > contours) {
@@ -260,12 +263,12 @@ void myDrawContours(MyImage *m, HandGesture *hg) {
 		int faridx = v[2]; Point ptFar(hg->contours[hg->cIdx][faridx]);
 		float depth = v[3] / 256;
 		/*
-			 line( m->src, ptStart, ptFar, Scalar(0,255,0), 1 );
-			 line( m->src, ptEnd, ptFar, Scalar(0,255,0), 1 );
-			 circle( m->src, ptFar,   4, Scalar(0,255,0), 2 );
-			 circle( m->src, ptEnd,   4, Scalar(0,0,255), 2 );
-			 circle( m->src, ptStart,   4, Scalar(255,0,0), 2 );
-	 */
+		line( m->src, ptStart, ptFar, Scalar(0,255,0), 1 );
+		line( m->src, ptEnd, ptFar, Scalar(0,255,0), 1 );
+		circle( m->src, ptFar,   4, Scalar(0,255,0), 2 );
+		circle( m->src, ptEnd,   4, Scalar(0,0,255), 2 );
+		circle( m->src, ptStart,   4, Scalar(255,0,0), 2 );
+		*/
 		circle(result, ptFar, 9, Scalar(0, 205, 0), 5);
 
 
@@ -278,7 +281,6 @@ void myDrawContours(MyImage *m, HandGesture *hg) {
 
 void makeContours(MyImage *m, HandGesture* hg) {
 	Mat aBw;
-	pyrUp(m->bw, m->bw);
 	m->bw.copyTo(aBw);
 	findContours(aBw, hg->contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 	hg->initVectors();
@@ -305,35 +307,92 @@ void makeContours(MyImage *m, HandGesture* hg) {
 
 
 int main() {
+
+	// Declare depth colorizer for pretty visualization of depth data
+	rs2::colorizer color_map;
+
+	// Declare RealSense pipeline, encapsulating the actual device and sensors
+	rs2::pipeline pipe;
+	// Start streaming with default recommended configuration
+	pipe.start();
+
+	// Define colorizer and align processing-blocks
+	colorizer colorize;
+	rs2::align align_to(RS2_STREAM_COLOR);
+
+	const auto window_name = "Display Image";
+
 	MyImage m(0);
 	HandGesture hg;
 	init(&m);
-	m.cap >> m.src;
-	namedWindow("img1", CV_WINDOW_KEEPRATIO);
-	out.open("out.avi", CV_FOURCC('M', 'J', 'P', 'G'), 15, m.src.size(), true);
-	waitForPalmCover(&m);
-	average(&m);
-	destroyWindow("img1");
-	initWindows(m);
-	initTrackbars();
-	for (;;) {
+
+	initWindows(m, window_name);
+	//initTrackbars();
+
+	// We are using StructuringElement for erode / dilate operations
+	auto gen_element = [](int erosion_size)
+	{
+		return getStructuringElement(cv::MORPH_RECT,
+			cv::Size(erosion_size + 1, erosion_size + 1),
+			cv::Point(erosion_size, erosion_size));
+	};
+
+	const int erosion_size = 3;
+	auto erode_less = gen_element(erosion_size);
+	auto erode_more = gen_element(erosion_size * 2);
+
+	// The following operation is taking grayscale image,
+	// performs threashold on it, closes small holes and erodes the white area
+	auto create_mask_from_depth = [&](cv::Mat& depth, int thresh, ThresholdTypes type)
+	{
+		threshold(depth, depth, thresh, 255, type);
+		//threshold(depth, depth, 0, 255, CV_THRESH_OTSU);
+		Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
+		morphologyEx(depth, depth, MORPH_OPEN, element);
+		//morphologyEx(depth, depth, MORPH_OPEN, Mat());
+		//dilate(depth, depth, erode_less);
+		//erode(depth, depth, erode_more);
+	};
+
+	while (waitKey(1) < 0 && cvGetWindowHandle(window_name))
+	{
+		rs2::frameset data = pipe.wait_for_frames(); // Wait for next set of frames from the camera
+
+		// Make sure the frameset is spatialy aligned
+		// (each pixel in depth image corresponds to the same pixel in the color image)
+		frameset aligned_set = align_to.process(data);
+		frame depth = aligned_set.get_depth_frame();
+		auto color_mat = frame_to_mat(aligned_set.get_color_frame());
+		// Update the window with new data
+		//imshow(window_name, frame_to_mat(color_map(depth)));
+		//imshow(window_name, color_mat);
+
+		Mat depthMat = frame_to_mat(color_map(depth)).clone();
 		hg.frameNumber++;
-		m.cap >> m.src;
-		flip(m.src, m.src, 1);
-		pyrDown(m.src, m.srcLR);
-		blur(m.srcLR, m.srcLR, Size(3, 3));
-		cvtColor(m.srcLR, m.srcLR, ORIGCOL2COL);
-		produceBinaries(&m);
-		cvtColor(m.srcLR, m.srcLR, COL2ORIGCOL);
+		m.o_src = depthMat;
+		m.src = m.o_src.clone();
+
+		// produceBinaries
+		// Colorize depth image with white being near and black being far
+		// This will take advantage of histogram equalization done by the colorizer
+		colorize.set_option(RS2_OPTION_COLOR_SCHEME, 2);
+		frame bw_depth = colorize(depth);
+
+		// Generate "near" mask image:
+		auto near = frame_to_mat(bw_depth);
+		cvtColor(near, near, CV_BGR2GRAY);
+		// Take just values within range [180-255]
+		// These will roughly correspond to near objects due to histogram equalization
+		create_mask_from_depth(near, 180, THRESH_BINARY);
+		m.bw = near;
+		medianBlur(m.bw, m.bw, 7);
+
 		makeContours(&m, &hg);
-		hg.getFingerNumber(&m);
-		showWindows(m);
-		out << m.src;
-		//imwrite("./images/final_result.jpg",m.src);
-		if (cv::waitKey(30) == char('q')) break;
+		//hg.getFingerNumber(&m);
+		showWindows(m, window_name);
 	}
-	destroyAllWindows();
-	out.release();
-	m.cap.release();
-	return 0;
+
+	return EXIT_SUCCESS;
+
+
 }

@@ -14,10 +14,11 @@ public:
 	MyImage();
 	Mat srcLR;
 	Mat src;
+	Mat o_src;
 	Mat bw;
 	vector<Mat> bwList;
-	VideoCapture cap;
-	int cameraSrc;
+	//VideoCapture cap;		
+	//int cameraSrc; 
 	void initWebCamera(int i);
 };
 

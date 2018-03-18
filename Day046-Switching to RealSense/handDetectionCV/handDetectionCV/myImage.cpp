@@ -13,7 +13,7 @@ MyImage::MyImage() {
 }
 
 MyImage::MyImage(int webCamera) {
-	cameraSrc = webCamera;
-	cap = VideoCapture(webCamera);
+	//cameraSrc=webCamera;
+	//cap=VideoCapture(webCamera);
 }
 
