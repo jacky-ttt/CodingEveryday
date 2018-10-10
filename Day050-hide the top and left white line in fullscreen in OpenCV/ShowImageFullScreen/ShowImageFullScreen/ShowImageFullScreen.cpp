@@ -27,7 +27,6 @@ int main(int argc, char** argv)
 
 	// full screen
 	namedWindow("Display window", CV_WINDOW_NORMAL); // Create a window for display.
-	resizeWindow("Display window", 1920, 1080);
 	cvSetWindowProperty("Display window", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
 
 
