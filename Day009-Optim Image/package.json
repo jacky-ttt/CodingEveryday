@@ -10,7 +10,7 @@
     "bootstrap-filestyle": "^1.2.1",
     "config": "^1.21.0",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.2.0",
+    "debug": "~2.6.9",
     "express": "~4.13.4",
     "gcloud": "^0.36.0",
     "imagemin": "^5.2.2",
